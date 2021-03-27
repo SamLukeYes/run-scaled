@@ -51,7 +51,7 @@ args = parser.parse_args()
 resolution = os.popen("xrandr | grep \* | cut -d' ' -f4").read().strip()
 displaynum = random.randint(10000, 99999999)
 escaped_params = os.popen(
-    f"printf '%q ' \"{' '.join(args.application)}\""
+    f"sh -c \"printf '%q ' '{' '.join(args.application)}'\""
 ).read()
 
 cmd = f'xpra start ":{displaynum}" --xvfb="Xvfb +extension Composite \
@@ -63,8 +63,7 @@ if args.input_method:
     if args.input_method == 'ibus':
         cmd += ' --start=ibus-daemon --input-method=ibus'
     else:
-        cmd += f' --start={args.input_method} \
-            --input-method={args.input_method}'
+        cmd += f' --start={args.input_method} --input-method={args.input_method}'
 
 print(cmd)
 os.system(cmd)
