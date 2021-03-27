@@ -48,22 +48,30 @@ parser.add_argument(
 parser.add_argument('application', nargs='+')
 args = parser.parse_args()
 
-resolution = os.popen("xrandr | grep \* | cut -d' ' -f4").read().strip()
+resolution = os.popen("xrandr | grep \\* | cut -d' ' -f4").read().strip()
+scaled_resolution = tuple(
+    map(
+        lambda x: int(int(x) / args.scaling_factor),
+        resolution.split('x')
+    )
+)
+
 displaynum = random.randint(10000, 99999999)
 escaped_params = os.popen(
     f"sh -c \"printf '%q ' '{' '.join(args.application)}'\""
 ).read()
 
 cmd = f'xpra start ":{displaynum}" --xvfb="Xvfb +extension Composite \
--screen 0 {resolution}x24+32 -nolisten tcp -noreset  \
--auth \$XAUTHORITY" --env=GDK_SCALE=1 --env=GDK_DPI_SCALE=1 \
---start-child="{escaped_params}" --exit-with-children'
+-screen 0 {scaled_resolution[0]}x{scaled_resolution[1]}x24+32 \
+-nolisten tcp -noreset -auth \\$XAUTHORITY" \
+--env=GDK_SCALE=1 --env=GDK_DPI_SCALE=1 \
+--start-child="{escaped_params}" --exit-with-children '
 
 if args.input_method:
     if args.input_method == 'ibus':
-        cmd += ' --start=ibus-daemon --input-method=ibus'
+        cmd += '--start=ibus-daemon --input-method=ibus'
     else:
-        cmd += f' --start={args.input_method} --input-method={args.input_method}'
+        cmd += f'--start={args.input_method} --input-method={args.input_method}'
 
 print(cmd)
 os.system(cmd)
