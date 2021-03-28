@@ -1,5 +1,28 @@
 #!/usr/bin/env python3
 
+copyright_info = '''\
+run-scaled, a Python script to run an X application scaled via Xpra
+Copyright (c) 2021, Sam L. Yes <https://github.com/SamLukeYes>
+
+Original bash script:
+run_scaled <https://github.com/kaueraal/run_scaled>
+Copyright (c) 2017, Alexander Kauer
+All rights reserved.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+'''
+
 import argparse
 import os
 import random
@@ -47,6 +70,8 @@ parser.add_argument(
 
 parser.add_argument('application', nargs='+')
 args = parser.parse_args()
+
+print(copyright_info)
 
 resolution = os.popen("xrandr | grep \\* | cut -d' ' -f4").read().strip()
 scaled_resolution = tuple(
