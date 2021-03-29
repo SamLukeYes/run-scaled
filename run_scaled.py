@@ -68,10 +68,13 @@ parser.add_argument(
     help='[Experimental] Sets the IME to use in the application.'
 )
 
-parser.add_argument('application', nargs='+')
+parser.add_argument('application', nargs='*')
 args = parser.parse_args()
 
-print(copyright_info)
+if not args.application:
+    print(copyright_info)
+    parser.print_help()
+    exit(0)
 
 resolution = os.popen("xrandr | grep \\* | cut -d' ' -f4").read().strip()
 scaled_resolution = tuple(
@@ -82,9 +85,7 @@ scaled_resolution = tuple(
 )
 
 displaynum = random.randint(10000, 99999999)
-escaped_params = os.popen(
-    f"sh -c \"printf '%q ' '{' '.join(args.application)}'\""
-).read()
+escaped_params = ' '.join(args.application)
 
 cmd = f'xpra start ":{displaynum}" --xvfb="Xvfb +extension Composite \
 -screen 0 {scaled_resolution[0]}x{scaled_resolution[1]}x24+32 \
