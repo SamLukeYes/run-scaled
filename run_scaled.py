@@ -63,9 +63,8 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--input-method',
-    choices=['ibus', 'fcitx', 'fcitx5'],
-    help='[Experimental] Sets the IME to use in the application.'
+    '--ime', '--input-method',
+    help='Sets the IME daemon to run with the application.'
 )
 
 parser.add_argument('application', nargs='*')
@@ -91,13 +90,8 @@ cmd = f'xpra start ":{displaynum}" --xvfb="Xvfb +extension Composite \
 -screen 0 {scaled_resolution[0]}x{scaled_resolution[1]}x24+32 \
 -nolisten tcp -noreset -auth \\$XAUTHORITY" \
 --env=GDK_SCALE=1 --env=GDK_DPI_SCALE=1 \
---start-child="{escaped_params}" --exit-with-children '
-
-if args.input_method:
-    if args.input_method == 'ibus':
-        cmd += '--start=ibus-daemon --input-method=ibus'
-    else:
-        cmd += f'--start={args.input_method} --input-method={args.input_method}'
+--start-child="{escaped_params}" --exit-with-children \
+--input-method=keep --start={args.ime}'
 
 print(cmd)
 os.system(cmd)
